@@ -35,7 +35,7 @@ https://raw.githubusercontent.com/konstant16-Z/BlockEditor/main/catalog.json
 
 ```bash
 sha256sum BlockEditor-1.0.2.tpm
-# 9473761870670afb7f09528b246137cf07bb23cfbb3cc11b9bb2ca835e733b41
+# d07c0ba464978fad0b51698ddb5b0ee57d3b7deff744c092ffb22454039ef3c1
 ```
 
 ## Команды (меню «Блоки»)
