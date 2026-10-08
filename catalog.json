@@ -1,0 +1,21 @@
+[
+  {
+    "name": "block-editor",
+    "title": "Редактор блоков",
+    "version": "1.0.0",
+    "description": "Правка определения блока в отдельном окне чертежа: изменения применяются к исходному блоку (обновляются все его вставки). Также сохранение блока в нативный формат .dwp и переименование блока. Доступно из контекстного меню вставки блока и из меню «Блоки».",
+    "author": "Konstantin Zelensky",
+    "tpm_url": "https://github.com/konstant16-Z/BlockEditor/releases/download/v1.0.0/BlockEditor-1.0.0.tpm",
+    "tpm_sha256": "b2d647164f6596cc1a797d2f0c7d5696596528d093037f1e9badb2657cefc4ac",
+    "help_url": "https://github.com/konstant16-Z/BlockEditor#readme",
+    "min_version": "16.0.62.12",
+    "compatibility": [
+      "Топоматик Robur — Автомобильные дороги",
+      "Топоматик Robur — Изыскания",
+      "Топоматик Robur — Железные дороги",
+      "Топоматик Robur — Искусственные сооружения",
+      "Топоматик Robur — Инженерные сети",
+      "Топоматик Robur — Генеральные планы"
+    ]
+  }
+]

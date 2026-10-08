@@ -4,6 +4,40 @@
 редактировать **определение блока** в отдельном окне чертежа, сохранять блок в
 нативный файл `.dwp` и переименовывать блок.
 
+## Установка
+
+Требуется Robur **16.0.62.12** и новее. Готовый пакет:
+[Releases → BlockEditor-1.0.0.tpm](https://github.com/konstant16-Z/BlockEditor/releases/download/v1.0.0/BlockEditor-1.0.0.tpm).
+
+**Способ 1 — штатный менеджер пакетов Topomatic** (`.tpm` — стандартный формат):
+
+```
+TopomaticPackageManager.exe install BlockEditor-1.0.0.tpm
+```
+
+После установки перезапустить Robur. Если плагин не подхватился — выполнить
+`clearcache` в командной строке Robur.
+
+**Способ 2 — «Библиотека модулей» (ABR).** В конструкторе библиотеки добавить
+дополнительный источник каталога с URL нашего `catalog.json`:
+
+```
+https://raw.githubusercontent.com/konstant16-Z/BlockEditor/main/catalog.json
+```
+
+Запись каталога (`catalog.json`) — по образцу `Y-Abramov/robur-modules`: те же
+10 полей (`name`, `title`, `version`, `description`, `author`, `tpm_url`,
+`tpm_sha256`, `help_url`, `min_version`, `compatibility`), тот же формат — массив
+объектов. ABR помечает сторонние источники предупреждением (`BuildExternalSourceWarning`),
+поэтому в `tpm_sha256` обязателен SHA-256 пакета.
+
+Проверка целостности скачанного пакета:
+
+```bash
+sha256sum BlockEditor-1.0.0.tpm
+# b2d647164f6596cc1a797d2f0c7d5696596528d093037f1e9badb2657cefc4ac
+```
+
 ## Команды (меню «Блоки»)
 
 | Команда | Действие |
