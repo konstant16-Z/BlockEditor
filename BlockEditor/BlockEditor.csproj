@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Import Project="$(MSBuildExtensionsPath)/$(MSBuildToolsVersion)/Microsoft.Common.props"
+          Condition="Exists('$(MSBuildExtensionsPath)/$(MSBuildToolsVersion)/Microsoft.Common.props')" />
+
+  <PropertyGroup>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <OutputType>Library</OutputType>
+    <RootNamespace>BlockEditor</RootNamespace>
+    <AssemblyName>BlockEditor</AssemblyName>
+    <LangVersion>7.3</LangVersion>
+    <Deterministic>true</Deterministic>
+
+    <!-- Пути к локальным DLL (общий каталог Robur-сборок репозитория) -->
+    <RoburDir>../../Development/Out/Bin/</RoburDir>
+    <RoburInstallDir>../../Development/Out/Bin/</RoburInstallDir>
+    <OutputPath>../../Development/Out/Bin/</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+
+  <!-- Сборки Robur (CopyLocal = false — правило AGENTS.md) -->
+  <ItemGroup>
+    <Reference Include="Topomatic.ApplicationPlatform">
+      <HintPath>$(RoburDir)/Topomatic.ApplicationPlatform.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Topomatic.Controls">
+      <HintPath>$(RoburDir)/Topomatic.Controls.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Topomatic.Cad.Foundation">
+      <HintPath>$(RoburDir)/Topomatic.Cad.Foundation.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Topomatic.Cad.View">
+      <HintPath>$(RoburDir)/Topomatic.Cad.View.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Topomatic.Dwg">
+      <HintPath>$(RoburDir)/Topomatic.Dwg.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Topomatic.Dwg.Layer">
+      <HintPath>$(RoburDir)/Topomatic.Dwg.Layer.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Topomatic.FoundationClasses">
+      <HintPath>$(RoburDir)/Topomatic.FoundationClasses.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Topomatic.Acax.Export">
+      <HintPath>$(RoburDir)/Topomatic.Acax.Export.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <!-- Системные ссылки -->
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+
+  <!-- Reference assemblies .NET Framework 4.8: нужны для сборки под Linux/WSL
+       (dotnet msbuild). На Windows пакет не влияет — там используются локальные
+       сборки .NET Framework. -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="All" />
+  </ItemGroup>
+
+  <!-- Исходники -->
+  <ItemGroup>
+    <Compile Include="Module.cs" />
+    <Compile Include="ModulePluginHost.cs" />
+    <Compile Include="Properties/AssemblyInfo.cs" />
+    <Compile Include="Core/BlockOps.cs" />
+    <Compile Include="Core/BlockEditSession.cs" />
+  </ItemGroup>
+
+  <!-- .plugin файл — всегда копировать -->
+  <ItemGroup>
+    <None Include="BlockEditor.plugin">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <Import Project="$(MSBuildToolsPath)/Microsoft.CSharp.targets" />
+
+</Project>

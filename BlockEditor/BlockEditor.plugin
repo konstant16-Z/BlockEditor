@@ -1,0 +1,49 @@
+{
+  "assemblies": {
+    "BlockEditor": {
+      "assembly": "BlockEditor.dll, BlockEditor.ModulePluginHost"
+    }
+  },
+
+  "actions": {
+    "id_block_edit": {
+      "cmd": "block_editor_edit \"%0\"",
+      "title": "Редактировать блок в отдельном окне"
+    },
+    "id_block_save": {
+      "cmd": "block_editor_save \"%0\"",
+      "title": "Сохранить блок в файл DWP"
+    },
+    "id_block_rename": {
+      "cmd": "block_editor_rename \"%0\"",
+      "title": "Переименовать блок"
+    }
+  },
+
+  "contexts": {
+    "object.dwgtag": {
+      "items": [
+        "id_block_edit",
+        "-",
+        "id_block_save",
+        "id_block_rename"
+      ]
+    }
+  },
+
+  "menubars": {
+    "rbproj": {
+      "items": [
+        {
+          "id": "block_editor_menu",
+          "title": "Блоки",
+          "items": [
+            "id_block_edit",
+            "id_block_save",
+            "id_block_rename"
+          ]
+        }
+      ]
+    }
+  }
+}
