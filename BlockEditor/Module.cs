@@ -169,5 +169,76 @@ namespace BlockEditor
                 MessageDlg.Show("Не удалось переименовать блок: " + ex.Message);
             }
         }
+
+        /// <summary>
+        /// Удалить определение блока из модели (опционально — вместе со вставками).
+        /// Предупреждает, если блок используется в чертеже.
+        /// </summary>
+        [cmd("block_editor_delete")]
+        public void DeleteBlock(string prms)
+        {
+            try
+            {
+                var cadView = CadView;
+                var drawing = BlockOps.FindActiveDrawing(cadView);
+                if (drawing == null)
+                {
+                    MessageDlg.Show("Активный чертёж не найден.");
+                    return;
+                }
+
+                var insert = BlockOps.PickInsert(cadView);
+                if (insert == null)
+                {
+                    return; // выбор отменён
+                }
+
+                var block = BlockOps.GetInsertBlock(insert);
+                if (block == null)
+                {
+                    MessageDlg.Show("Выбранный объект не является вставкой блока.");
+                    return;
+                }
+
+                int inserts = BlockOps.CountInserts(drawing, block);
+                string message = inserts == 0
+                    ? "Удалить из модели определение блока «" + block.Name + "»?"
+                    : "Блок «" + block.Name + "» используется в чертеже (" + inserts +
+                      " вст.).\nУдалить определение блока из модели?";
+
+                if (MessageDlg.Show(message, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
+                {
+                    return;
+                }
+
+                bool withInserts = false;
+                if (inserts > 0)
+                {
+                    // по умолчанию предлагаем сохранить вставки (определение пропадёт,
+                    // вставки останутся неразрешёнными) — но чаще нужно удалить и их
+                    var answer = MessageDlg.Show(
+                        "Удалить вместе с вставками?\n\n" +
+                        "«Да» — удалить определение и все вставки (" + inserts + " шт.).\n" +
+                        "«Нет» — удалить только определение, вставки останутся без блока.\n" +
+                        "«Отмена» — ничего не удалять.",
+                        MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+
+                    if (answer == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+                    withInserts = answer == DialogResult.Yes;
+                }
+
+                BlockOps.RemoveBlock(drawing, block, withInserts);
+                cadView.Unlock();
+                cadView.Invalidate();
+                MessageDlg.Show("Определение блока «" + block.Name + "» удалено из модели.");
+            }
+            catch (Exception ex)
+            {
+                MessageDlg.Show("Не удалось удалить блок: " + ex.Message);
+            }
+        }
     }
 }

@@ -17,6 +17,10 @@
     "id_block_rename": {
       "cmd": "block_editor_rename \"%0\"",
       "title": "Переименовать блок"
+    },
+    "id_block_delete": {
+      "cmd": "block_editor_delete \"%0\"",
+      "title": "Удалить определение блока из модели"
     }
   },
 
@@ -26,7 +30,8 @@
         "id_block_edit",
         "-",
         "id_block_save",
-        "id_block_rename"
+        "id_block_rename",
+        "id_block_delete"
       ]
     }
   },
@@ -40,7 +45,9 @@
           "items": [
             "id_block_edit",
             "id_block_save",
-            "id_block_rename"
+            "id_block_rename",
+            "-",
+            "id_block_delete"
           ]
         }
       ]

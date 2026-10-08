@@ -7,12 +7,12 @@
 ## Установка
 
 Требуется Robur **16.0.62.12** и новее. Готовый пакет:
-[Releases → BlockEditor-1.0.0.tpm](https://github.com/konstant16-Z/BlockEditor/releases/download/v1.0.0/BlockEditor-1.0.0.tpm).
+[Releases → BlockEditor-1.0.1.tpm](https://github.com/konstant16-Z/BlockEditor/releases/download/v1.0.1/BlockEditor-1.0.1.tpm).
 
 **Способ 1 — штатный менеджер пакетов Topomatic** (`.tpm` — стандартный формат):
 
 ```
-TopomaticPackageManager.exe install BlockEditor-1.0.0.tpm
+TopomaticPackageManager.exe install BlockEditor-1.0.1.tpm
 ```
 
 После установки перезапустить Robur. Если плагин не подхватился — выполнить
@@ -34,8 +34,8 @@ https://raw.githubusercontent.com/konstant16-Z/BlockEditor/main/catalog.json
 Проверка целостности скачанного пакета:
 
 ```bash
-sha256sum BlockEditor-1.0.0.tpm
-# b2d647164f6596cc1a797d2f0c7d5696596528d093037f1e9badb2657cefc4ac
+sha256sum BlockEditor-1.0.1.tpm
+# 9512975002278276df24e2679c9e6b7724426f43312373ed21f7ff5ee693128e
 ```
 
 ## Команды (меню «Блоки»)
@@ -45,23 +45,25 @@ sha256sum BlockEditor-1.0.0.tpm
 | `block_editor_edit` | Открыть определение выбранного блока в отдельном окне-редакторе. После правок пользователь закрывает окно — плагин спрашивает «Применить изменения блока?» и при согласии **перезаписывает определение исходного блока** (обновляются все вставки этого блока в чертеже), затем удаляет временный файл. |
 | `block_editor_save` | Сохранить блок (без вставки) в отдельный файл через диалог — **только нативный `.dwp`** (Stg/BSTG, без потерь). |
 | `block_editor_rename` | Переименовать блок (валидация как в штатном диалоге переименования). |
+| `block_editor_delete` | Удалить определение блока из модели. Если блок используется в чертеже — предупреждение с числом вставок и выбор: удалить только определение либо вместе со вставками. |
 
 Выбор блока: если в текущем выделении ровно одна вставка — она берётся автоматически;
 иначе плагин просит указать вставку кликом на экране.
 
 ## Контекстное меню
 
-Все три команды доступны в контекстном меню вставки блока (правая кнопка по выбранному
+Все четыре команды доступны в контекстном меню вставки блока (правая кнопка по выбранному
 блоку в окне чертежа) — рядом со штатным «Разбить тэг на примитивы»:
 
 - **Редактировать блок в отдельном окне** — открыть определение блока и править его;
 - **Сохранить блок в файл DWP**;
-- **Переименовать блок**.
+- **Переименовать блок**;
+- **Удалить определение блока из модели**.
 
 ```json
 "contexts": {
   "object.dwgtag": {
-    "items": [ "id_block_edit", "-", "id_block_save", "id_block_rename" ]
+    "items": [ "id_block_edit", "-", "id_block_save", "id_block_rename", "id_block_delete" ]
   }
 }
 ```
@@ -132,23 +134,31 @@ icons/                необязательно (densities 16dp/32dp × 1x…3x
 (заголовок), `description`, `author`, `minVersion` (минимальная версия ПК, `"16.0"`).
 
 ```bash
-./build-tpm.sh              # Debug → dist/BlockEditor-1.0.0.tpm + SHA-256
+./build-tpm.sh              # Debug → dist/BlockEditor-1.0.1.tpm + SHA-256
 ./build-tpm.sh Release
 ```
 
-- **Версия берётся из `AssemblyInfo.cs`** (`AssemblyVersion("1.0.0.0")` → `1.0.0`) —
+- **Версия берётся из `AssemblyInfo.cs`** (`AssemblyVersion("1.0.1.0")` → `1.0.1`) —
   единый источник истины; в `package.json` попадает без четвёртой части.
 - Параметры пакета (`PKG_CAPTION`, `PKG_DESCRIPTION`, `PKG_AUTHOR`, …) задаются в
   начале `build-tpm.sh`.
 - Скрипт печатает SHA-256 — его значение уходит в реестр пакетов как `tpm_sha256`.
+- **Сборка воспроизводима**: у всех записей zip фиксированное время (2026-01-01),
+  поэтому повторные прогоны на одном исходнике дают тот же SHA-256. Проверка:
+  ```bash
+  bash build-tpm.sh >/dev/null; A=$(sha256sum dist/BlockEditor-1.0.1.tpm | cut -d' ' -f1)
+  bash build-tpm.sh >/dev/null; B=$(sha256sum dist/BlockEditor-1.0.1.tpm | cut -d' ' -f1)
+  [ "$A" = "$B" ] && echo "Reproducible build ✓"
+  ```
+  (т.е. хеш протухает только при реальном изменении кода, а не от времени сборки).
 - Зависимостей нет: упаковка на `python3` (`zipfile`), `zip` в WSL может отсутствовать.
 - Каталог `dist/` в репозиторий не коммитится.
 
 Проверка целостности/состава пакета:
 
 ```bash
-sha256sum dist/BlockEditor-1.0.0.tpm
-python3 -m zipfile -l dist/BlockEditor-1.0.0.tpm
+sha256sum dist/BlockEditor-1.0.1.tpm
+python3 -m zipfile -l dist/BlockEditor-1.0.1.tpm
 ```
 
 Запись в реестре пакетов (`catalog.json`) — по образцу `RoadStyle`:
@@ -157,10 +167,10 @@ python3 -m zipfile -l dist/BlockEditor-1.0.0.tpm
 {
   "name": "block-editor",
   "title": "Редактор блоков",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "…",
   "author": "Konstantin Zelensky",
-  "tpm_url": "https://github.com/konstant16-Z/BlockEditor/releases/download/v1.0.0/BlockEditor-1.0.0.tpm",
+  "tpm_url": "https://github.com/konstant16-Z/BlockEditor/releases/download/v1.0.1/BlockEditor-1.0.1.tpm",
   "tpm_sha256": "<SHA-256 из вывода скрипта>",
   "help_url": "…",
   "min_version": "16.0.62.12",

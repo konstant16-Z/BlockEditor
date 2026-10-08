@@ -201,5 +201,56 @@ namespace BlockEditor.Core
             }
             return block.Name;
         }
+
+        /// <summary>
+        /// Сколько вставок блока в текущем пространстве чертежа.
+        /// Блок без вставок удалять бессмысленно — это отсекает опцию в диалоге.
+        /// </summary>
+        public static int CountInserts(Drawing drawing, DwgBlock block)
+        {
+            int count = 0;
+            foreach (DwgEntity entity in drawing.ActiveSpace.Entities)
+            {
+                if (entity is DwgInsert insert && insert.Block == block)
+                {
+                    count++;
+                }
+            }
+            return count;
+        }
+
+        /// <summary>
+        /// Удаление определения блока из модели. Канон — robur-mcp (BlockTools.RemoveBlock):
+        /// drawing.Blocks.Remove(name) внутри BeginUpdate/EndUpdate.
+        /// </summary>
+        public static void RemoveBlock(Drawing drawing, DwgBlock block, bool withInserts)
+        {
+            string name = block.Name;
+
+            drawing.BeginUpdate();
+            try
+            {
+                if (withInserts)
+                {
+                    // вставки удаляем первыми — иначе ссылки на блок осиротеют
+                    // (ActiveSpace — это DwgBlock, коллекция сущностей в .Entities)
+                    foreach (DwgEntity entity in drawing.ActiveSpace.Entities)
+                    {
+                        if (entity is DwgInsert insert && insert.Block == block)
+                        {
+                            drawing.ActiveSpace.Entities.Remove(insert);
+                        }
+                    }
+                }
+                if (!drawing.Blocks.Remove(name))
+                {
+                    throw new InvalidOperationException("Не удалось удалить блок «" + name + "».");
+                }
+            }
+            finally
+            {
+                drawing.EndUpdate();
+            }
+        }
     }
 }

@@ -89,6 +89,9 @@ rm -f "$DIST/$TPM_NAME"
 python3 - "$STAGE" "$DIST/$TPM_NAME" <<'PY'
 import os, sys, zipfile
 stage, out = sys.argv[1], sys.argv[2]
+# Фиксированные метаданные записи: иначе mtime файлов попадает в архив, и SHA-256
+# меняется при каждой пересборке — tpm_sha256 в catalog.json перестаёт сходиться.
+STAMP = (1980, 1, 1, 0, 0, 0)
 files = []
 for root, dirs, names in os.walk(stage):
     dirs.sort(); names.sort()
@@ -97,12 +100,19 @@ for root, dirs, names in os.walk(stage):
         files.append((full, os.path.relpath(full, stage).replace(os.sep, '/')))
 # канон: package.json первым, далее содержимое по алфавиту
 files.sort(key=lambda p: (p[1] != 'package.json', p[1]))
-with zipfile.ZipFile(out, 'w', zipfile.ZIP_DEFLATED) as z:
+with zipfile.ZipFile(out, 'w', zipfile.ZIP_DEFLATED, compresslevel=9) as z:
     # канон-пакеты содержат и записи каталогов (bin/, plugins/, icons/), даже если icons/ пуст
     for d in ('bin', 'plugins', 'icons'):
-        z.writestr(zipfile.ZipInfo(d + '/'), b'')
+        zi = zipfile.ZipInfo(d + '/', date_time=STAMP)
+        zi.external_attr = (0o755 << 16) | 0x10
+        zi.compress_type = zipfile.ZIP_STORED
+        z.writestr(zi, b'')
     for full, rel in files:
-        z.write(full, rel)
+        zi = zipfile.ZipInfo(rel, date_time=STAMP)
+        zi.external_attr = 0o644 << 16          # права не зависят от umask/ФС
+        zi.compress_type = zipfile.ZIP_DEFLATED
+        with open(full, 'rb') as f:
+            z.writestr(zi, f.read())
 print("файлов в пакете:", len(files))
 PY
 
