@@ -11,6 +11,10 @@
     <AssemblyName>BlockEditor</AssemblyName>
     <LangVersion>7.3</LangVersion>
     <Deterministic>true</Deterministic>
+    <!-- Путь к PDB вшивается в DLL (DebugType=full). Без PathMap сборка из WSL и
+         из Windows даёт разные байты (а значит разный SHA-256 пакета) только из-за
+         префикса пути. Здесь он заменён на постоянный — сборка воспроизводима. -->
+    <PathMap>$(MSBuildProjectDirectory)=/_/</PathMap>
 
     <!-- Пути к локальным DLL (общий каталог Robur-сборок репозитория) -->
     <RoburDir>../../Development/Out/Bin/</RoburDir>

@@ -1,4 +1,8 @@
-# Сборка
+# Требуется клон Shared рядом (общий сборщик .tpm)
+../Shared/BuildTpm.Common.ps1
+
+# Артефакты сборки и упаковки
+dist/
 bin/
 obj/
 [Dd]ebug/
@@ -16,7 +20,6 @@ x86/
 *.DotSettings.user
 
 # Прочее
-dist/
 *.log
 *.tmp
 Thumbs.db

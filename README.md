@@ -7,12 +7,12 @@
 ## Установка
 
 Требуется Robur **16.0.62.12** и новее. Готовый пакет:
-[Releases → BlockEditor-1.0.1.tpm](https://github.com/konstant16-Z/BlockEditor/releases/download/v1.0.1/BlockEditor-1.0.1.tpm).
+[Releases → BlockEditor-1.0.2.tpm](https://github.com/konstant16-Z/BlockEditor/releases/download/v1.0.2/BlockEditor-1.0.2.tpm).
 
 **Способ 1 — штатный менеджер пакетов Topomatic** (`.tpm` — стандартный формат):
 
 ```
-TopomaticPackageManager.exe install BlockEditor-1.0.1.tpm
+TopomaticPackageManager.exe install BlockEditor-1.0.2.tpm
 ```
 
 После установки перезапустить Robur. Если плагин не подхватился — выполнить
@@ -34,8 +34,8 @@ https://raw.githubusercontent.com/konstant16-Z/BlockEditor/main/catalog.json
 Проверка целостности скачанного пакета:
 
 ```bash
-sha256sum BlockEditor-1.0.1.tpm
-# 9512975002278276df24e2679c9e6b7724426f43312373ed21f7ff5ee693128e
+sha256sum BlockEditor-1.0.2.tpm
+# 9473761870670afb7f09528b246137cf07bb23cfbb3cc11b9bb2ca835e733b41
 ```
 
 ## Команды (меню «Блоки»)
@@ -134,31 +134,38 @@ icons/                необязательно (densities 16dp/32dp × 1x…3x
 (заголовок), `description`, `author`, `minVersion` (минимальная версия ПК, `"16.0"`).
 
 ```bash
-./build-tpm.sh              # Debug → dist/BlockEditor-1.0.1.tpm + SHA-256
+./build-tpm.sh              # Debug → dist/BlockEditor-1.0.2.tpm + SHA-256
 ./build-tpm.sh Release
 ```
 
-- **Версия берётся из `AssemblyInfo.cs`** (`AssemblyVersion("1.0.1.0")` → `1.0.1`) —
+- **Версия берётся из `AssemblyInfo.cs`** (`AssemblyVersion("1.0.2.0")` → `1.0.2`) —
   единый источник истины; в `package.json` попадает без четвёртой части.
 - Параметры пакета (`PKG_CAPTION`, `PKG_DESCRIPTION`, `PKG_AUTHOR`, …) задаются в
   начале `build-tpm.sh`.
 - Скрипт печатает SHA-256 — его значение уходит в реестр пакетов как `tpm_sha256`.
-- **Сборка воспроизводима**: у всех записей zip фиксированное время (2026-01-01),
-  поэтому повторные прогоны на одном исходнике дают тот же SHA-256. Проверка:
+- **Сборка воспроизводима на одной платформе**: у всех записей zip фиксированное время
+  (эпоха zip 1980-01-01), путь к PDB в DLL нормализован через `PathMap`, поэтому
+  повторные прогоны на одном исходнике дают тот же SHA-256. Проверка:
   ```bash
-  bash build-tpm.sh >/dev/null; A=$(sha256sum dist/BlockEditor-1.0.1.tpm | cut -d' ' -f1)
-  bash build-tpm.sh >/dev/null; B=$(sha256sum dist/BlockEditor-1.0.1.tpm | cut -d' ' -f1)
+  bash build-tpm.sh >/dev/null; A=$(sha256sum dist/BlockEditor-1.0.2.tpm | cut -d' ' -f1)
+  bash build-tpm.sh >/dev/null; B=$(sha256sum dist/BlockEditor-1.0.2.tpm | cut -d' ' -f1)
   [ "$A" = "$B" ] && echo "Reproducible build ✓"
   ```
-  (т.е. хеш протухает только при реальном изменении кода, а не от времени сборки).
+  ⚠️ **Между WSL и Windows байты не совпадают** (COFF-время и отладочные метаданные
+  компилятора), поэтому релиз собирается на одной платформе — Windows; хеш из
+  `catalog.json` соответствует пакету, собранному на Windows.
+- **Windows-вариант** — `build-tpm.ps1` через общий сборщик
+  [`konstant16-Z/Shared`](https://github.com/konstant16-Z/Shared) (`BuildTpm.Common.ps1`,
+  репозиторий клонируется рядом с проектом; подробности — `BUILDING.md`). Состав пакета
+  и порядок записей совпадают с `build-tpm.sh`.
 - Зависимостей нет: упаковка на `python3` (`zipfile`), `zip` в WSL может отсутствовать.
 - Каталог `dist/` в репозиторий не коммитится.
 
 Проверка целостности/состава пакета:
 
 ```bash
-sha256sum dist/BlockEditor-1.0.1.tpm
-python3 -m zipfile -l dist/BlockEditor-1.0.1.tpm
+sha256sum dist/BlockEditor-1.0.2.tpm
+python3 -m zipfile -l dist/BlockEditor-1.0.2.tpm
 ```
 
 Запись в реестре пакетов (`catalog.json`) — по образцу `RoadStyle`:
@@ -167,10 +174,10 @@ python3 -m zipfile -l dist/BlockEditor-1.0.1.tpm
 {
   "name": "block-editor",
   "title": "Редактор блоков",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "…",
   "author": "Konstantin Zelensky",
-  "tpm_url": "https://github.com/konstant16-Z/BlockEditor/releases/download/v1.0.1/BlockEditor-1.0.1.tpm",
+  "tpm_url": "https://github.com/konstant16-Z/BlockEditor/releases/download/v1.0.2/BlockEditor-1.0.2.tpm",
   "tpm_sha256": "<SHA-256 из вывода скрипта>",
   "help_url": "…",
   "min_version": "16.0.62.12",

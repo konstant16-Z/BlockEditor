@@ -2,11 +2,11 @@
   {
     "name": "block-editor",
     "title": "Редактор блоков",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "Правка определения блока в отдельном окне чертежа: изменения применяются к исходному блоку (обновляются все его вставки). Также сохранение блока в нативный .dwp, переименование и удаление определения блока из модели. Доступно из контекстного меню вставки блока и из меню «Блоки».",
     "author": "Konstantin Zelensky",
-    "tpm_url": "https://github.com/konstant16-Z/BlockEditor/releases/download/v1.0.1/BlockEditor-1.0.1.tpm",
-    "tpm_sha256": "9512975002278276df24e2679c9e6b7724426f43312373ed21f7ff5ee693128e",
+    "tpm_url": "https://github.com/konstant16-Z/BlockEditor/releases/download/v1.0.2/BlockEditor-1.0.2.tpm",
+    "tpm_sha256": "9473761870670afb7f09528b246137cf07bb23cfbb3cc11b9bb2ca835e733b41",
     "help_url": "https://github.com/konstant16-Z/BlockEditor#readme",
     "min_version": "16.0.62.12",
     "compatibility": [
