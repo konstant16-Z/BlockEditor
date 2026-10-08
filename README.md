@@ -74,12 +74,68 @@ msbuild BlockEditor.csproj /p:Configuration=Debug   # Windows
 ```
 BlockEditor/
   BlockEditor.csproj      .NET Framework 4.8, LangVersion 7.3
-  BlockEditor.plugin      манифест (actions + menubars rbproj)
+  BlockEditor.plugin      манифест (actions + contexts + menubars rbproj)
   Module.cs               команды
   ModulePluginHost.cs     публичный хост
   Core/BlockOps.cs        операции с чертежами/блоками (выбор, копирование, слои)
   Core/BlockEditSession.cs сессия редактирования: окно + применение по закрытию
+  build-tpm.sh            сборка + упаковка релиза (.tpm)
 ```
+
+## Релиз: упаковка `.tpm`
+
+`.tpm` — формат дистрибуции модулей Robur: **обычный ZIP** (deflate, без подписи;
+целостность проверяется по SHA-256 ассета релиза). Состав пакета:
+
+```
+package.json          манифест пакета (обязателен)
+bin/BlockEditor.dll   сборка модуля
+plugins/BlockEditor.plugin
+icons/                необязательно (densities 16dp/32dp × 1x…3x)
+```
+
+`package.json` — шесть полей: `name` (kebab-case id), `version` (semver), `caption`
+(заголовок), `description`, `author`, `minVersion` (минимальная версия ПК, `"16.0"`).
+
+```bash
+./build-tpm.sh              # Debug → dist/BlockEditor-1.0.0.tpm + SHA-256
+./build-tpm.sh Release
+```
+
+- **Версия берётся из `AssemblyInfo.cs`** (`AssemblyVersion("1.0.0.0")` → `1.0.0`) —
+  единый источник истины; в `package.json` попадает без четвёртой части.
+- Параметры пакета (`PKG_CAPTION`, `PKG_DESCRIPTION`, `PKG_AUTHOR`, …) задаются в
+  начале `build-tpm.sh`.
+- Скрипт печатает SHA-256 — его значение уходит в реестр пакетов как `tpm_sha256`.
+- Зависимостей нет: упаковка на `python3` (`zipfile`), `zip` в WSL может отсутствовать.
+- Каталог `dist/` в репозиторий не коммитится.
+
+Проверка целостности/состава пакета:
+
+```bash
+sha256sum dist/BlockEditor-1.0.0.tpm
+python3 -m zipfile -l dist/BlockEditor-1.0.0.tpm
+```
+
+Запись в реестре пакетов (`catalog.json`) — по образцу `RoadStyle`:
+
+```json
+{
+  "name": "block-editor",
+  "title": "Редактор блоков",
+  "version": "1.0.0",
+  "description": "…",
+  "author": "Konstantin Zelensky",
+  "tpm_url": "https://github.com/konstant16-Z/BlockEditor/releases/download/v1.0.0/BlockEditor-1.0.0.tpm",
+  "tpm_sha256": "<SHA-256 из вывода скрипта>",
+  "help_url": "…",
+  "min_version": "16.0.62.12",
+  "compatibility": ["Топоматик Robur — Автомобильные дороги", "…"]
+}
+```
+
+Сборка `Debug` (то, что идёт в релиз — по конвенции каталога модулей Robur) —
+`./build-tpm.sh Debug`; при необходимости `Release` — той же командой со вторым аргументом.
 
 ## Ограничения
 
