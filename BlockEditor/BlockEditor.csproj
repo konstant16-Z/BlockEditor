@@ -16,10 +16,13 @@
          префикса пути. Здесь он заменён на постоянный — сборка воспроизводима. -->
     <PathMap>$(MSBuildProjectDirectory)=/_/</PathMap>
 
-    <!-- Пути к локальным DLL (общий каталог Robur-сборок репозитория) -->
-    <RoburDir>../../Development/Out/Bin/</RoburDir>
-    <RoburInstallDir>../../Development/Out/Bin/</RoburInstallDir>
-    <OutputPath>../../Development/Out/Bin/</OutputPath>
+    <!-- Каталог сборок Robur. По умолчанию — новый корпус (16.0.62.x);
+     для старого (16.0.50.x) передаётся /p:RoburBinDir=.../Bin_16_50
+     (конвенция Dop/ROBUR-16.0.50-compat.md). -->
+    <RoburBinDir Condition="'$(RoburBinDir)'==''">../../Development/Out/Bin/</RoburBinDir>
+    <RoburDir>$(RoburBinDir)</RoburDir>
+    <RoburInstallDir>$(RoburBinDir)</RoburInstallDir>
+    <OutputPath>$(RoburBinDir)</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
 

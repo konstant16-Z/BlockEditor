@@ -141,9 +141,20 @@ icons/                необязательно (densities 16dp/32dp × 1x…3x
 (заголовок), `description`, `author`, `minVersion` (минимальная версия ПК, `"16.0"`).
 
 ```bash
-./build-tpm.sh              # Debug → dist/BlockEditor-1.0.3.tpm + SHA-256
-./build-tpm.sh Release
+./build-tpm.sh                  # Debug, корпус 16.0.62.x → dist/BlockEditor-1.0.3.tpm + SHA-256
+./build-tpm.sh Release          # Release, тот же корпус
+./build-tpm.sh Debug old        # корпус 16.0.50.x — локальная сборка, см. ниже
+./build-tpm.sh Debug <путь>     # произвольный каталог сборок Robur
 ```
+
+- **Версия берётся из `package.json`** в корне репозитория — единый источник истины
+  (файл копируется в пакет байт-в-байт, как это делает общий сборщик `Shared`).
+  `AssemblyInfo.cs` держите синхронно (`AssemblyVersion`).
+- **Корпус**: `new` → `Development/Out/Bin` (16.0.62.x, публикуется), `old` →
+  `Bin_16_50` (16.0.50.x). Каталог передаётся в проект как `/p:RoburBinDir=...`.
+- ⚠️ **Пакеты для 16.0.50.x не публикуются** — они собираются локально по запросу
+  (`dist/BlockEditor-<версия>-16.0.50.tpm`) и в релизы не выкладываются. На GitHub
+  лежат только сборки под 16.0.62.x; `min_version` в `catalog.json` accordingly.
 
 - **Версия берётся из `AssemblyInfo.cs`** (`AssemblyVersion("1.0.3.0")` → `1.0.3`) —
   единый источник истины; в `package.json` попадает без четвёртой части.
