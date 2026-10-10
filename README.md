@@ -7,12 +7,12 @@
 ## Установка
 
 Требуется Robur **16.0.62.12** и новее. Готовый пакет:
-[Releases → BlockEditor-1.0.2.tpm](https://github.com/konstant16-Z/BlockEditor/releases/download/v1.0.2/BlockEditor-1.0.2.tpm).
+[Releases → BlockEditor-1.0.3.tpm](https://github.com/konstant16-Z/BlockEditor/releases/download/v1.0.3/BlockEditor-1.0.3.tpm).
 
 **Способ 1 — штатный менеджер пакетов Topomatic** (`.tpm` — стандартный формат):
 
 ```
-TopomaticPackageManager.exe install BlockEditor-1.0.2.tpm
+TopomaticPackageManager.exe install BlockEditor-1.0.3.tpm
 ```
 
 После установки перезапустить Robur. Если плагин не подхватился — выполнить
@@ -34,8 +34,8 @@ https://raw.githubusercontent.com/konstant16-Z/BlockEditor/main/catalog.json
 Проверка целостности скачанного пакета:
 
 ```bash
-sha256sum BlockEditor-1.0.2.tpm
-# d07c0ba464978fad0b51698ddb5b0ee57d3b7deff744c092ffb22454039ef3c1
+sha256sum BlockEditor-1.0.3.tpm
+# 5361bcfd783644356e28ed3c32ac03ee82c7b0837225739995f0720a6251e6c9
 ```
 
 ## Команды (меню «Блоки»)
@@ -62,16 +62,23 @@ sha256sum BlockEditor-1.0.2.tpm
 
 ```json
 "contexts": {
-  "object.dwgtag": {
+  "object.insert": {
     "items": [ "id_block_edit", "-", "id_block_save", "id_block_rename", "id_block_delete" ]
-  }
+  },
+  "objects.insert": { "items": [ "id_block_edit" ] }
 }
 ```
 
-`object.dwgtag` — объектный контекст Robur для вставки блока (`DwgInsert`; в Robur вставка
-называется «тэг»). Объект уже выбран (по нему и кликнули), поэтому `PickInsert` берёт его
-из выделения без дополнительного запроса. Механизм и остальные ключи —
-`ApiNotes/plugin.md` → «Контекстные меню».
+Ключ — **алиас типа из `[DesignAlias]` в нижнем регистре**:
+`Topomatic.Dwg.Entities.DwgInsert` → `"INSERT"` → `object.insert` (один выбранный
+объект) и `objects.insert` (несколько). ⚠️ Публичного ключа «вставка блока» нет:
+`object.dwgtag` из `mockup.plugin` («Разбить тэг на примитивы») платформа не
+генерирует — алиаса `dwgtag` нет ни у одного типа, меню по нему не появляется.
+Подробности — `ApiNotes/plugin.md` → «Контекстные меню».
+
+Объект уже выбран (по нему и кликнули), поэтому `PickInsert` берёт его из выделения без
+дополнительного запроса. Механизм и остальные ключи — `ApiNotes/plugin.md` →
+«Контекстные меню».
 
 ## Как это устроено
 
@@ -134,11 +141,11 @@ icons/                необязательно (densities 16dp/32dp × 1x…3x
 (заголовок), `description`, `author`, `minVersion` (минимальная версия ПК, `"16.0"`).
 
 ```bash
-./build-tpm.sh              # Debug → dist/BlockEditor-1.0.2.tpm + SHA-256
+./build-tpm.sh              # Debug → dist/BlockEditor-1.0.3.tpm + SHA-256
 ./build-tpm.sh Release
 ```
 
-- **Версия берётся из `AssemblyInfo.cs`** (`AssemblyVersion("1.0.2.0")` → `1.0.2`) —
+- **Версия берётся из `AssemblyInfo.cs`** (`AssemblyVersion("1.0.3.0")` → `1.0.3`) —
   единый источник истины; в `package.json` попадает без четвёртой части.
 - Параметры пакета (`PKG_CAPTION`, `PKG_DESCRIPTION`, `PKG_AUTHOR`, …) задаются в
   начале `build-tpm.sh`.
@@ -147,8 +154,8 @@ icons/                необязательно (densities 16dp/32dp × 1x…3x
   (эпоха zip 1980-01-01), путь к PDB в DLL нормализован через `PathMap`, поэтому
   повторные прогоны на одном исходнике дают тот же SHA-256. Проверка:
   ```bash
-  bash build-tpm.sh >/dev/null; A=$(sha256sum dist/BlockEditor-1.0.2.tpm | cut -d' ' -f1)
-  bash build-tpm.sh >/dev/null; B=$(sha256sum dist/BlockEditor-1.0.2.tpm | cut -d' ' -f1)
+  bash build-tpm.sh >/dev/null; A=$(sha256sum dist/BlockEditor-1.0.3.tpm | cut -d' ' -f1)
+  bash build-tpm.sh >/dev/null; B=$(sha256sum dist/BlockEditor-1.0.3.tpm | cut -d' ' -f1)
   [ "$A" = "$B" ] && echo "Reproducible build ✓"
   ```
   ⚠️ **Между WSL и Windows байты не совпадают** (COFF-время и отладочные метаданные
@@ -164,8 +171,8 @@ icons/                необязательно (densities 16dp/32dp × 1x…3x
 Проверка целостности/состава пакета:
 
 ```bash
-sha256sum dist/BlockEditor-1.0.2.tpm
-python3 -m zipfile -l dist/BlockEditor-1.0.2.tpm
+sha256sum dist/BlockEditor-1.0.3.tpm
+python3 -m zipfile -l dist/BlockEditor-1.0.3.tpm
 ```
 
 Запись в реестре пакетов (`catalog.json`) — по образцу `RoadStyle`:
@@ -174,10 +181,10 @@ python3 -m zipfile -l dist/BlockEditor-1.0.2.tpm
 {
   "name": "block-editor",
   "title": "Редактор блоков",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "…",
   "author": "Konstantin Zelensky",
-  "tpm_url": "https://github.com/konstant16-Z/BlockEditor/releases/download/v1.0.2/BlockEditor-1.0.2.tpm",
+  "tpm_url": "https://github.com/konstant16-Z/BlockEditor/releases/download/v1.0.3/BlockEditor-1.0.3.tpm",
   "tpm_sha256": "<SHA-256 из вывода скрипта>",
   "help_url": "…",
   "min_version": "16.0.62.12",

@@ -25,13 +25,18 @@
   },
 
   "contexts": {
-    "object.dwgtag": {
+    "object.insert": {
       "items": [
         "id_block_edit",
         "-",
         "id_block_save",
         "id_block_rename",
         "id_block_delete"
+      ]
+    },
+    "objects.insert": {
+      "items": [
+        "id_block_edit"
       ]
     }
   },
